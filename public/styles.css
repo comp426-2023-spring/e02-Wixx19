@@ -57,4 +57,11 @@
   #refreshButton {
     margin-top: 1rem;
   }
-  
+
+.hide {
+    visibility: hidden;
+}
+
+.show {
+    visibility: visible;
+}

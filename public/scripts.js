@@ -2,78 +2,83 @@
 // check out the coin-server example from a previous COMP 426 semester.
 // https://github.com/jdmar3/coinserver
 
-document.addEventListener('DOMContentLoaded', main);
-function main(){
-    document.getElementById('gameForm').addEventListener('submit', (event) => {
-        event.preventDefault(); // Prevent the form from submitting and causing a page reload
-      
-        const rpsRadio = document.getElementById('rpsRadio');
-        const rplsRadio = document.getElementById('rplsRadio');
-        
-    
-        function getSelectedShootValue() {
-        const shootRadioButtons = document.getElementsByName('shoot');
-        let selectedValue;
-    
-        for (let i = 0; i < shootRadioButtons.length; i++) {
-            if (shootRadioButtons[i].checked) {
-            selectedValue = shootRadioButtons[i].value;
+function play() {
+    var rps = document.getElementById('rps').checked;
+    var rpsls = document.getElementById('rpsls').checked;
+    var opp = document.getElementById('opp').checked;
+    var shot;
+    var shots = document.getElementsByName('shot-choice');
+    for (var i = 0; i < shots.length; i++) {
+        if (shots[i].checked) {
+            shot = shots[i].value;
             break;
-            }
         }
-    
-        return selectedValue;
-        }
-    
-        if (rpsRadio.checked) {
-            console.log("rps was selected")
-            fetch('/app/rps/play?shot=' + getSelectedShootValue(), {
-                method: 'GET',
+    }
+
+    if (!rps && !rpsls) {
+        document.getElementById('result').innerText = 'Choose a game mode.';
+    } else if (rps && !opp) {
+        //document.getElementById('result').innerText = 'RPS';
+        fetch(`/app/rps/play`)
+            .then((res) => {
+                return res.json();
             })
-            .then(res => res.json()) // Parse the response as JSON and return a new Promise
-            .then(data => {
-                console.log(data);
-                const result = data["result"];
-                const resultDiv = document.getElementById("result");
-                resultDiv.innerText = result;
-                resultDiv.style.display = "inline";
+            .then((json) => {
+                document.getElementById('result').innerText = `Shot: ${json.player}`;
             })
-            .catch(error => {
-                console.error('Error:', error);
-            });
-            
-            
-        } else if (rplsRadio.checked) {
-            console.log("rpls was selected")
-          window.location.href = '/app/rpsls';
-        } else {
-          alert('Please select a game mode.');
+    } else if (rpsls && !opp) {
+        //document.getElementById('result').innerText = 'RPSLS';
+        
+        fetch(`/app/rpsls/play`)
+            .then((res) => {
+                return res.json();
+            })
+            .then((json) => {
+                document.getElementById('result').innerText = `Shot: ${json.player}`;
+            })
+    } else if (rps && opp) {
+        fetch(`/app/rps/play/${shot}`)
+            .then((res) => {
+                return res.json();
+            })
+            .then((json) => {
+                document.getElementById('result').innerText = `Player: ${json.player}\nOpponent: ${json.opponent}\nResult: ${json.result}`;
+            })
+    } else {
+        fetch(`/app/rpsls/play/${shot}`)
+            .then((res) => {
+                return res.json();
+            })
+            .then((json) => {
+                document.getElementById('result').innerText = `Player: ${json.player}\nOpponent: ${json.opponent}\nResult: ${json.result}`;
+            })
+    }
+    document.getElementById('results').className = 'show';
+    
+}
+
+function showShots() {
+    var rps = document.getElementById('rps').checked;
+    var rpsls = document.getElementById('rpsls').checked;
+    var opp = document.getElementById('opp').checked;
+    if(opp) {
+        if (rps) {
+            document.getElementById('rpsshots').className = 'show';
+            document.getElementById('rpslsshots').className = 'hide';
+        } else if (rpsls) {
+            document.getElementById('rpsshots').className = 'show';
+            document.getElementById('rpslsshots').className = 'show';
         }
-      });
-    
-      document.getElementById("rpsRadio").addEventListener('click', (event) => {
-        console.log("onclick works")
-        const views = ["rockView","scissorView","paperView"];
-        views.forEach(view => {
-            document.getElementById(view).style.display ="inline";
-        })
-        const removeViews = ["lizardView","spockView"]
-        removeViews.forEach(view => {
-            document.getElementById(view).style.display ="none";
-        })
-      });
-    
-      document.getElementById("rplsRadio").addEventListener('click', (event) => {
-        console.log("onclick works")
-        const views = ["rockView","scissorView","paperView","lizardView","spockView"];
-        views.forEach(view => {
-            document.getElementById(view).style.display ="inline";
-        })
-      })
-    
-      document.getElementById('refreshButton').addEventListener('click', () => {
-        window.location.reload();
-      });
-    
-    
+    } else {
+        document.getElementById('rpsshots').className = 'hide';
+        document.getElementById('rpslsshots').className = 'hide';
+    }
+}
+
+function restart() {
+    document.getElementById('results').className = 'hide';
+    document.getElementById('rpsshots').className = 'hide';
+    document.getElementById('rpslsshots').className = 'hide';
+    document.getElementById('rps').checked = true;
+    document.getElementById('opp').checked = false;
 }

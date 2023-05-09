@@ -72,7 +72,7 @@ app.get('/', (req, res) => {
 
 //IMPORT LIB for rock paper scissor here (OR) or copy and paste rock paper script here 
 
-import { rps, rpsls } from '/Users/williamgarcia-sanchez/Documents/workspace/e02-Wixx19/lib/rpsls.js';
+import { rps, rpsls } from 'lib/rpsls.js';
 
 //LOAD UP API ROUTES BELOW
 

@@ -63,67 +63,6 @@ const app = express()
 const port = args.port || args.p || process.env.PORT || 8080
 // Load app middleware here to serve routes, accept data requests, etc.
 //
-
-//This connects our api to the HTML
-app.use(express.static('public'));
-app.get('/', (req, res) => {
-  res.sendFile(__dirname + '/public/index.html');
-});
-
-//IMPORT LIB for rock paper scissor here (OR) or copy and paste rock paper script here 
-
-import { rps, rpsls } from 'lib/rpsls.js';
-
-//LOAD UP API ROUTES BELOW
-
-app.use(express.json());
-app.use(express.urlencoded({extended: true}));
-
-
-app.get("/app/", (req, res) => {
-    res.status(200).send('200 OK');
-})
-
-app.get("/app/rps/", (req, res) => {
-    res.status(200).send(JSON.stringify(rps()));
-})
-
-app.get("/app/rpsls/", (req, res) => {
-    res.status(200).send(JSON.stringify(rpsls()));
-})
-
-//queries
-app.get("/app/rps/play/", (req, res) => {
-    res.status(200).send(JSON.stringify(rps(req.query.shot)));
-})
-
-app.get("/app/rpsls/play/", (req, res) => {
-    res.status(200).send(JSON.stringify(rpsls(req.query.shot)));
-})
-
-// accept JSON request bodies
-app.post("/app/rps/play/", (req, res) => {
-    res.status(200).send(JSON.stringify(rps(req.body.shot)));
-})
-
-app.post("/app/rpsls/play/", (req, res) => {
-    res.status(200).send(JSON.stringify(rpsls(req.body.shot)));
-})
-
-//url (parameter) endpoint
-app.get("/app/rps/play/:shot", (req, res) => {
-    res.status(200).send(JSON.stringify(rps(req.params.shot)));
-})
-
-app.get("/app/rpsls/play/:shot", (req, res) => {
-    res.status(200).send(JSON.stringify(rpsls(req.params.shot)));
-})
-
-app.get("*", (req, res) => {
-    res.status(404).send("404 NOT FOUND");
-})
-
-
 // Create and update access log
 // The morgan format below is the Apache Foundation combined format but with ISO8601 dates
 app.use(morgan(':remote-addr - :remote-user [:date[iso]] ":method :url HTTP/:http-version" :status :res[content-length] ":referrer" ":user-agent"',
@@ -132,6 +71,96 @@ app.use(morgan(':remote-addr - :remote-user [:date[iso]] ":method :url HTTP/:htt
 // Serve static files
 const staticpath = args.stat || args.s || process.env.STATICPATH || path.join(__dirname, 'public')
 app.use('/', express.static(staticpath))
+
+
+/**
+ * a04 code
+ */
+
+
+import {rps, rpsls} from "./lib/rpsls.js";
+app.use(express.json());
+app.use(express.urlencoded({extended: true}));
+
+app.get('/app', (req, res) => {
+    res.status(200).send('200 OK').end();
+});
+
+/**
+ * Random rps shot
+ */
+app.get('/app/rps', (req, res) => {
+    res.status(200).send(JSON.stringify(rps(req.body.shot))).end();
+})
+
+/**
+ * Random rpsls shot
+ */
+app.get('/app/rpsls', (req, res) => {
+    res.status(200).send(JSON.stringify(rpsls(req.body.shot))).end();
+})
+
+/**
+ * URLEncoded
+ * Note: This is a GET
+ * Example: http://localhost:5000/app/rps/play?shot=rock
+ */
+app.get('/app/rps/play', (req, res) => {
+    res.status(200).send(JSON.stringify(rps(req.query.shot))).end();
+})
+
+/**
+ * URLEncoded
+ * Note: This is a GET
+ * Example: http://localhost:5000/app/rps/play?shot=spock
+ */
+app.get('/app/rpsls/play', (req, res) => {
+    res.status(200).send(JSON.stringify(rpsls(req.query.shot))).end();
+})
+
+/**
+ * JSON
+ * Note: This is a POST
+ */
+app.post('/app/rps/play', (req, res) => {
+    res.status(200).send(JSON.stringify(rps(req.body.shot))).end();
+})
+
+/**
+ * JSON
+ * Note: This is a POST
+ */
+app.post('/app/rpsls/play', (req, res) => {
+    res.status(200).send(JSON.stringify(rpsls(req.body.shot))).end();
+})
+
+/**
+ * /:shot syntax allows for that field to be parsed
+ */
+app.get('/app/rps/play/:shot', (req, res) => {
+    res.status(200).send(JSON.stringify(rps(req.params.shot))).end();
+})
+
+/**
+ * /:shot syntax allows for that field to be parsed
+ */
+app.get('/app/rpsls/play/:shot', (req, res) => {
+    res.status(200).send(JSON.stringify(rpsls(req.params.shot))).end();
+})
+
+/**
+ * Default (non-existent) endpoint
+ */
+app.all('*', (req, res) => {
+    res.status(404).send('404 NOT FOUND').end();
+})
+
+
+/**
+ * End a04 code
+ */
+
+
 // Create app listener
 const server = app.listen(port)
 // Create a log entry on start

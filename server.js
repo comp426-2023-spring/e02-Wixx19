@@ -78,7 +78,7 @@ app.use('/', express.static(staticpath))
  */
 
 
-import {rps, rpsls} from 'lib/rpsls.js'
+import {rps, rpsls} from "./lib/rpsls.js";
 app.use(express.json());
 app.use(express.urlencoded({extended: true}));
 

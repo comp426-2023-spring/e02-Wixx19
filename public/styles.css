@@ -9,7 +9,7 @@
   body {
     font-family: Arial, sans-serif;
   }
-  
+
   /* Center the content and apply a max-width */
   .container {
     margin: 0 auto;
@@ -18,8 +18,12 @@
   }
   
   /* Add some spacing and center align the text for headings */
-  h1 {
+  h2 {
     margin-bottom: 1rem;
+    text-align: center;
+  }
+
+  div {
     text-align: center;
   }
   
@@ -65,3 +69,17 @@
 .show {
     visibility: visible;
 }
+
+h1 {
+    text-align: center;
+}
+
+ul {
+    text-align: center;
+}
+
+p {
+    text-align: center;
+}
+
+  
